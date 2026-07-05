@@ -164,7 +164,10 @@ function buildSubjectCards() {
 // --- 🌿 BRANCH/CHAPTERS GRID GENERATOR (Screen 2) ---
 function goToBranchSelect(subjectName) {
     currentSubject = subjectName;
-    document.getElementById('current-subject-title-branch').innerText = subjectName;
+    
+    // Header mein se English naam saaf karne ke liye split ka use kiya
+    let cleanSubjectName = subjectName.split('(')[0].trim();
+    document.getElementById('current-subject-title-branch').innerText = cleanSubjectName;
     
     const container = document.getElementById('branches-container');
     container.innerHTML = "";
@@ -172,12 +175,21 @@ function goToBranchSelect(subjectName) {
     const branches = Object.keys(subjectData[subjectName].branches);
     
     branches.forEach((branch, index) => {
+        // 🔄 1. Har branch ki alag progress nikaalo (Quiz + Mock dono ka average)
+        let qProg = getBranchProgress(subjectName, branch, 'Quiz');
+        let mProg = getBranchProgress(subjectName, branch, 'Mock Test');
+        let branchProgress = Math.round((qProg + mProg) / 2);
+
+        // 🔄 2. Card ke andar dikhane ke liye sirf Gujarati naam nikalo
+        let cleanBranchName = branch.split('(')[0].trim();
+
         const card = document.createElement('div');
         card.className = "card";
-        card.onclick = () => goToTypeSelect(branch);
+        card.onclick = () => goToTypeSelect(branch); // Data linkage ke liye asli branch name hi pass hoga
         card.innerHTML = `
             <div>
-                <div>${index + 1}. ${branch}</div>
+                <div>${index + 1}. ${cleanBranchName}</div>
+                <span class="sub-perc">કુલ પ્રગતિ: ${branchProgress}%</span>
             </div>
             <span>➔</span>
         `;
@@ -190,9 +202,11 @@ function goToBranchSelect(subjectName) {
 // --- ⚡ TYPE SELECT INTERMEDIARY (Screen 3) ---
 function goToTypeSelect(branchName) {
     currentBranch = branchName;
-    document.getElementById('current-subject-name').innerText = branchName;
     
-    // Refresh branch specific quiz/mock progress
+    // Header mein sirf Gujarati naam dikhao
+    let cleanBranchName = branchName.split('(')[0].trim();
+    document.getElementById('current-subject-name').innerText = cleanBranchName;
+    
     let quizProg = getBranchProgress(currentSubject, branchName, 'Quiz');
     let mockProg = getBranchProgress(currentSubject, branchName, 'Mock Test');
     
@@ -205,7 +219,11 @@ function goToTypeSelect(branchName) {
 // --- 📋 DYNAMIC QUIZ ROWS GENERATOR (Screen 4) ---
 function goToQuizList(type) {
     currentType = type;
-    document.getElementById('current-list-title').innerText = `${currentBranch} - ${type}`;
+    
+    // Header mein se English hatakar sirf Gujarati naam set kiya
+    let cleanBranchName = currentBranch.split('(')[0].trim();
+    document.getElementById('current-list-title').innerText = `${cleanBranchName} - ${type}`;
+    
     buildQuizRows();
     changeScreen('screen-quiz-list');
 }
