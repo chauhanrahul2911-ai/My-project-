@@ -263,8 +263,13 @@ function buildQuizRows() {
                 // Mapping se English folder name niklega
                 const englishFolder = subjectData[currentSubject].folder;
                 
-                // 🚀 URL parameters redirection with Branch Name included
-                window.location.href = `quiz-player.html?subject=${englishFolder}&branch=${encodeURIComponent(currentBranch)}&type=${encodeURIComponent(currentType)}&no=${i}`;
+                // Is line ko window.location.href waali line ke thik upar daal dein:
+            localStorage.setItem('last_active_subject', currentSubject);
+            localStorage.setItem('last_active_branch', currentBranch);
+            localStorage.setItem('last_active_type', currentType);
+
+            // Aapka purana code jo player par le jata hai:
+            window.location.href = `quiz-player.html?subject=${englishFolder}&branch=${encodeURIComponent(currentBranch)}&type=${encodeURIComponent(currentType)}&no=${i}`;
             }
         };
         container.appendChild(row);
@@ -293,8 +298,33 @@ function simulatePayment() {
     alert("પેમેન્ટ સફળ રહ્યું! બધા લોક ખુલી ગયા છે.");
 }
 
-// ENTRY STARTUP INITS
+// ENTRY STARTUP INITS (Smart Auto-Route Engine)
 window.onload = function() {
     updateProfileUI();
     buildSubjectCards();
+
+    // 🕵️ Check karo kya bacha test page se wapas lauta hai
+    const savedSubject = localStorage.getItem('last_active_subject');
+    const savedBranch = localStorage.getItem('last_active_branch');
+    const savedType = localStorage.getItem('last_active_type');
+
+    if (savedSubject && savedBranch && savedType) {
+        // Pura state wapas load karo global variables mein
+        currentSubject = savedSubject;
+        currentBranch = savedBranch;
+        currentType = savedType;
+
+        // Background ki screens ko setup kar do taaki bacha back jaye toh step-by-step piche jaye
+        // 1. Branch Screen prepare karo
+        goToBranchSelect(currentSubject);
+        // 2. Type Screen prepare karo
+        goToTypeSelect(currentBranch);
+        // 3. Direct use Quiz List screen par phenk do jahan se woh gaya tha!
+        goToQuizList(currentType);
+
+        // 🧹 Kaam khatam hone ke baad localStorage saaf kar do taaki agli baar fresh load par dikkat na ho
+        localStorage.removeItem('last_active_subject');
+        localStorage.removeItem('last_active_branch');
+        localStorage.removeItem('last_active_type');
+    }
 };
