@@ -1,0 +1,79 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSRTC Conductor Prep 2026</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="top-navbar">
+        <button class="menu-trigger" onclick="toggleSidebar()">☰</button>
+        <span>શ્રી સરસ્વતી કરિયર એકેડમી</span>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar" class="sidebar">
+        <button class="sidebar-close" onclick="toggleSidebar()">×</button>
+        <div class="sidebar-brand">LEONARDO.EDU</div>
+        
+        <div id="profile-area" class="profile-section">
+            </div>
+
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active-menu" onclick="changeScreenFromSidebar('screen-subjects')">🏠 Home Dashboard</li>
+            <li class="sidebar-item" onclick="alert('તમારો કુલ સ્કોર પ્રોફાઇલ સેક્શનમાં જોઈ શકાય છે.')">📊 My Progress Report</li>
+            <li class="sidebar-item" onclick="alert('WhatsApp Help Support: 9999999999')">💬 Contact Support Help</li>
+        </ul>
+    </div>
+
+    <div id="screen-subjects" class="screen active">
+        <header>
+            <h1>વિષય વાઇઝ ટેસ્ટ સિરીઝ</h1>
+            <p>તમારી પ્રગતિ અને વિષય પસંદ કરો</p>
+        </header>
+        <div class="grid" id="subjects-container">
+            </div>
+    </div>
+
+    <div id="screen-type-select" class="screen">
+        <button class="back-btn" onclick="changeScreen('screen-subjects')">⬅️ પાછા જાઓ</button>
+        <header>
+            <h1 id="current-subject-name">વિષય</h1>
+            <p>તમારો ટેસ્ટ પ્રકાર પસંદ કરો</p>
+        </header>
+        <div class="grid" style="margin-top: 3rem;">
+            <div class="card" style="padding: 2.5rem; flex-direction:column; justify-content: center;" onclick="goToQuizList('Quiz')">
+                <span>Topic Quiz (ટોપિક ક્વિઝ)</span>
+                <span class="sub-perc" id="quiz-type-perc">Progress: 0%</span>
+            </div>
+            <div class="card" style="padding: 2.5rem; flex-direction:column; justify-content: center;" onclick="goToQuizList('Mock Test')">
+                <span>Full Mock Test (મોક ટેસ્ટ)</span>
+                <span class="sub-perc" id="mock-type-perc">Progress: 0%</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-quiz-list" class="screen">
+        <button class="back-btn" onclick="changeScreen('screen-type-select')">⬅️ પાછા જાઓ</button>
+        <header>
+            <h1 id="current-list-title">ટેસ્ટ લિસ્ટ</h1>
+            <p>પ્રેક્ટિસ શરૂ કરવા માટે ટેસ્ટ પર ક્લિક કરો</p>
+        </header>
+        <div id="dynamic-list-container" style="margin-top: 2rem;"></div>
+    </div>
+
+    <div id="paywall-modal" class="modal">
+        <div class="modal-content">
+            <h3>🔒 પ્રીમિયમ ટેસ્ટ અનલોક કરો</h3>
+            <p>આગળના બધા જ મોક ટેસ્ટ અને ક્વિઝ અનલોક કરવા માટે અત્યારે જ પ્લાન ખરીદો.</p>
+            <h2 style="color:var(--accent); margin: 15px 0;">₹149</h2>
+            <button class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="simulatePayment()">Buy Now</button>
+            <button class="btn" style="background: #ccc;" onclick="closePaywall()">બંધ કરો</button>
+        </div>
+    </div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
