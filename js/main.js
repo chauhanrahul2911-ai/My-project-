@@ -269,7 +269,7 @@ function buildQuizRows() {
             localStorage.setItem('last_active_type', currentType);
 
             // main.js ke andar buildQuizRows mein jahan link banti hai, wahan branchFolder jodh dijiye:
-           let branchFolder = subjectData[currentSubject].branches[currentBranch].folder; // aapka mapped english name
+           let branchFolder = currentBranch.includes('(') ? currentBranch.split('(')[1].replace(')', '').trim().toLowerCase().replace(/ /g, '_') : currentBranch.trim().toLowerCase().replace(/ /g, '_');
            window.location.href = `quiz-player.html?subject=${currentSubject}&branch=${encodeURIComponent(currentBranch)}&branchFolder=${branchFolder}&type=${encodeURIComponent(currentType)}&no=${i}`;
             }
         };
