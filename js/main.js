@@ -268,8 +268,9 @@ function buildQuizRows() {
             localStorage.setItem('last_active_branch', currentBranch);
             localStorage.setItem('last_active_type', currentType);
 
-            // Aapka purana code jo player par le jata hai:
-            window.location.href = `quiz-player.html?subject=${englishFolder}&branch=${encodeURIComponent(currentBranch)}&type=${encodeURIComponent(currentType)}&no=${i}`;
+            // main.js ke andar buildQuizRows mein jahan link banti hai, wahan branchFolder jodh dijiye:
+           let branchFolder = subjectData[currentSubject].branches[currentBranch].folder; // aapka mapped english name
+           window.location.href = `quiz-player.html?subject=${currentSubject}&branch=${encodeURIComponent(currentBranch)}&branchFolder=${branchFolder}&type=${encodeURIComponent(currentType)}&no=${i}`;
             }
         };
         container.appendChild(row);
