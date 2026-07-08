@@ -18,6 +18,7 @@ var quizData = [];
 var currentIdx = 0; var score = 0; var answered = false;
 var timeLeft = 600; var isReview = false; var userChoices = [];
 var isMuted = false; var timerInterval;
+var isLifelineUsed = false; // 🎭 Track lifeline state across back/next globally
 
 async function loadQuizDataset() {
     try {
@@ -37,7 +38,7 @@ function playSnd(id) { if (isMuted) return; var s = document.getElementById(id);
 function toggleMute() { isMuted = !isMuted; document.getElementById('mute-toggle').innerText = isMuted ? "🔇" : "🔊"; }
 
 function startCountdown() {
-    clearInterval(timerInterval); // Reset protection
+    clearInterval(timerInterval);
     timerInterval = setInterval(function() {
         if(isReview) return;
         timeLeft--;
@@ -49,8 +50,6 @@ function startCountdown() {
 
 function loadQuestion() {
     answered = false;
-    
-    // 🎯 Rule: After every question, screen zero-zero scroll check position active
     window.scrollTo(0, 0);
 
     const nextBtn = document.getElementById('next-btn');
@@ -58,21 +57,22 @@ function loadQuestion() {
     document.getElementById('explain-btn').style.display = 'none';
     document.getElementById('review-tag').style.display = isReview ? 'block' : 'none';
     
-    // 🔙 BACK BUTTON CONTROL: Pehle question par back nahi dikhega, review state mein bhi hide rahega
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
         backBtn.style.display = (currentIdx > 0 && !isReview) ? 'block' : 'none';
     }
 
-    // 🎯 SUBMIT TEXT DYNAMIC CHANGE: Agar aakhri question hai toh "Submit" likho, warna "Next ➔"
     if (currentIdx === quizData.length - 1) {
         nextBtn.innerText = "Submit";
     } else {
         nextBtn.innerText = "Next ➔";
     }
 
+    // 🎭 Lifeline state safety lock on back navigation
     var lifelineBtn = document.getElementById('fifty-fifty');
-    lifelineBtn.disabled = isReview; lifelineBtn.style.display = isReview ? 'none' : 'block';
+    lifelineBtn.style.display = isReview ? 'none' : 'block';
+    lifelineBtn.disabled = (isReview || isLifelineUsed); 
+
     document.getElementById('progress-text').innerText = "Question " + (currentIdx + 1) + " of " + quizData.length;
     
     var data = quizData[currentIdx];
@@ -89,9 +89,8 @@ function loadQuestion() {
     var btns = document.querySelectorAll('.option-btn');
     btns.forEach(function(btn, i) {
         btn.textContent = data.options[i];
-        btn.className = 'option-btn'; btn.style.visibility = 'visible'; btn.disabled = isReview;
+        btn.className = 'option-btn'; btn.style.display = 'block'; btn.disabled = isReview;
         
-        // Agar bacha back karke aaya hai aur option pehle chuna tha toh restore karo styling
         if(!isReview && userChoices[currentIdx] !== undefined) {
             answered = true;
             nextBtn.style.display = 'block';
@@ -108,17 +107,13 @@ function loadQuestion() {
     });
 }
 
-// 🔙 HANDLER FOR BACK ACTION BUTTON
 function handleBackQuestion() {
     if (currentIdx > 0 && !isReview) {
         playSnd('snd-click');
-        
-        // Agar pichle question ka jawab sahi diya tha, toh score minus karo taaki re-attempt sahi calculation kare
         var correct = quizData[currentIdx - 1].correct;
         if(userChoices[currentIdx - 1] === correct && score > 0) {
             score--;
         }
-        
         currentIdx--;
         loadQuestion();
         document.getElementById('score-display').innerText = "Score: " + score;
@@ -149,31 +144,28 @@ function openExplain() {
 function closeExplain() { document.getElementById('explainModal').style.display = 'none'; }
 
 function useFiftyFifty() {
-    if(answered || isReview) return;
+    if(answered || isReview || isLifelineUsed) return;
     playSnd('snd-click');
+    isLifelineUsed = true; // Mark permanent lock
     document.getElementById('fifty-fifty').disabled = true;
     var correct = quizData[currentIdx].correct;
     var btns = document.querySelectorAll('.option-btn');
     var indices = [0, 1, 2, 3].filter(function(i) { return i !== correct; }).sort(function() { return Math.random() - 0.5; });
-    btns[indices[0]].style.visibility = 'hidden'; btns[indices[1]].style.visibility = 'hidden';
+    btns[indices[0]].style.display = 'none'; btns[indices[1]].style.display = 'none';
 }
 
 function handleNext() {
     playSnd('snd-click');
-    
-    // Check if review or final submission trigger
     if(currentIdx === quizData.length - 1) { 
         clearInterval(timerInterval); 
-        if(!isReview) { autoSaveScore(); } // 🎯 Auto-save score on submit click instantly!
+        if(!isReview) { autoSaveScore(); } 
         showFinalPage(); 
         return; 
     }
-    
     currentIdx++;
     loadQuestion();
 }
 
-// 🎯 AUTO SAVE ENGINE BLOCK (Saves score on final submission)
 function autoSaveScore() {
     var finalPercent = Math.round((score / quizData.length) * 100) || 0;
     let scoreKey = `${subject}_${branch}_${type}_${quizNo}_score`;
@@ -187,13 +179,12 @@ function showFinalPage() {
     playSnd('snd-finish');
     document.getElementById('game-ui').style.display = 'none';
     
-    // 🎯 Final layout ui selection center alignment setup
     const finalUi = document.getElementById('final-ui');
     finalUi.style.display = 'flex';
     finalUi.style.flexDirection = 'column';
     finalUi.style.justifyContent = 'center';
     finalUi.style.alignItems = 'center';
-    finalUi.style.minHeight = '70vh'; 
+    finalUi.style.minHeight = '50vh'; 
 
     var percent = Math.round((score / quizData.length) * 100) || 0;
     var msg = ""; var color = "";
@@ -207,25 +198,17 @@ function showFinalPage() {
     document.getElementById('final-score').innerText = "Result: " + score + "/" + quizData.length + " (" + percent + "%)";
 }
 
-// 🔙 BACK TO THE DASHBOARD NAVIGATION
 function saveAndGoHome() {
-    // Sync state indicators
     localStorage.setItem('last_active_subject', subject);
     localStorage.setItem('last_active_branch', branch);
     localStorage.setItem('last_active_type', type);
-    
     window.location.href = 'index.html';
 }
 
-// 🔄 START QUIZ AGAIN ENGINE
 function restartQuizFresh() {
     playSnd('snd-click');
-    currentIdx = 0;
-    score = 0;
-    answered = false;
-    timeLeft = 600;
-    isReview = false;
-    userChoices = [];
+    currentIdx = 0; score = 0; answered = false; timeLeft = 600; isReview = false; userChoices = [];
+    isLifelineUsed = false; // Reset lifeline globally
     
     document.getElementById('score-display').innerText = "Score: 0";
     document.getElementById('game-ui').style.display = 'block';
@@ -240,4 +223,3 @@ function openZoom() { playSnd('snd-click'); document.getElementById('fullImg').s
 function closeZoom() { document.getElementById('zoomModal').style.display = 'none'; }
 
 loadQuizDataset();
-  
