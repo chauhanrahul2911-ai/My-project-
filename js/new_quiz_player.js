@@ -1,4 +1,3 @@
-// URL Parameters parsing logic
 const urlParams = new URLSearchParams(window.location.search);
 const subject = urlParams.get('subject'); 
 const branch = decodeURIComponent(urlParams.get('branch')) || ""; 
@@ -18,7 +17,7 @@ var quizData = [];
 var currentIdx = 0; var score = 0; var answered = false;
 var timeLeft = 600; var isReview = false; var userChoices = [];
 var isMuted = false; var timerInterval;
-var isLifelineUsed = false; // 🎭 Track lifeline state across back/next globally
+var isLifelineUsed = false; // 🎭 Global tracker for lifeline
 
 async function loadQuizDataset() {
     try {
@@ -53,11 +52,14 @@ function loadQuestion() {
     window.scrollTo(0, 0);
 
     const nextBtn = document.getElementById('next-btn');
+    const backBtn = document.getElementById('back-btn');
+    const explainBtn = document.getElementById('explain-btn');
+    
     nextBtn.style.display = isReview ? 'block' : 'none';
-    document.getElementById('explain-btn').style.display = 'none';
+    explainBtn.style.display = 'none';
     document.getElementById('review-tag').style.display = isReview ? 'block' : 'none';
     
-    const backBtn = document.getElementById('back-btn');
+    // 🔙 Back button display logic
     if (backBtn) {
         backBtn.style.display = (currentIdx > 0 && !isReview) ? 'block' : 'none';
     }
@@ -94,7 +96,7 @@ function loadQuestion() {
         if(!isReview && userChoices[currentIdx] !== undefined) {
             answered = true;
             nextBtn.style.display = 'block';
-            if(quizData[currentIdx].explanation) document.getElementById('explain-btn').style.display = 'block';
+            if(quizData[currentIdx].explanation) explainBtn.style.display = 'block';
             if(i === data.correct) btn.classList.add('correct');
             if(userChoices[currentIdx] === i && i !== data.correct) btn.classList.add('wrong');
             btn.disabled = true;
@@ -146,7 +148,7 @@ function closeExplain() { document.getElementById('explainModal').style.display 
 function useFiftyFifty() {
     if(answered || isReview || isLifelineUsed) return;
     playSnd('snd-click');
-    isLifelineUsed = true; // Mark permanent lock
+    isLifelineUsed = true; 
     document.getElementById('fifty-fifty').disabled = true;
     var correct = quizData[currentIdx].correct;
     var btns = document.querySelectorAll('.option-btn');
@@ -184,7 +186,7 @@ function showFinalPage() {
     finalUi.style.flexDirection = 'column';
     finalUi.style.justifyContent = 'center';
     finalUi.style.alignItems = 'center';
-    finalUi.style.minHeight = '50vh'; 
+    finalUi.style.minHeight = '60vh'; 
 
     var percent = Math.round((score / quizData.length) * 100) || 0;
     var msg = ""; var color = "";
@@ -208,7 +210,7 @@ function saveAndGoHome() {
 function restartQuizFresh() {
     playSnd('snd-click');
     currentIdx = 0; score = 0; answered = false; timeLeft = 600; isReview = false; userChoices = [];
-    isLifelineUsed = false; // Reset lifeline globally
+    isLifelineUsed = false; 
     
     document.getElementById('score-display').innerText = "Score: 0";
     document.getElementById('game-ui').style.display = 'block';
