@@ -124,7 +124,7 @@ body {
     gap: 10px; 
     margin-top: 15px; 
     width: 100%; 
-    box-sizing: border-box; /* Ensures padding stays inside */
+    box-sizing: border-box; 
 }
 
 .back-action-btn { 
@@ -162,7 +162,28 @@ body {
 }
 
 .progress { margin-top: 12px; font-size: 0.85rem; color: #64748b; font-weight: 700; }
-.review-label { color: var(--error); font-size: 0.8rem; font-weight: 800; margin-bottom: 5px; display: none; }
+
+/* 🌟 ULTRA-PREMIUM GLOWING REVIEW MODE BAR FIX */
+.review-label { 
+    display: none; 
+    background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+    color: #dc2626; 
+    font-size: 0.9rem; 
+    font-weight: 800; 
+    padding: 8px 12px; 
+    border-radius: 12px; 
+    margin-bottom: 12px; 
+    border: 1px dashed #fca5a5;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.05);
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { opacity: 0.9; }
+    50% { opacity: 1; border-color: #ef4444; }
+    100% { opacity: 0.9; }
+}
 
 /* 🛠️ FIXED OVERFLOW MODAL WITH BOX SIZING SAFETY */
 .modal { 
@@ -177,7 +198,7 @@ body {
     backdrop-filter: blur(5px); 
     justify-content: center; 
     align-items: center; 
-    padding: 15px; /* Keeps modal inside viewport borders */
+    padding: 15px; 
     box-sizing: border-box; 
 }
 
@@ -185,14 +206,14 @@ body {
 .explain-content { 
     background: white; 
     width: 100%; 
-    max-width: 380px; /* Safe upper limit for mobile devices */
+    max-width: 380px; 
     padding: 20px; 
     border-radius: 15px; 
     text-align: left; 
     position: relative; 
     max-height: 80vh; 
     overflow-y: auto; 
-    box-sizing: border-box; /* 🔒 Fixes the horizontal stretch issue completely! */
+    box-sizing: border-box; 
 }
 .explain-content h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; font-weight: 700; }
 .close-explain { width: 100%; margin-top: 20px; padding: 12px; background: var(--dark); color: white; border: none; border-radius: 10px; font-weight: 700; }
@@ -201,9 +222,40 @@ body {
 #fullImg { 
     max-width: 100%; 
     max-height: 80vh; 
-    object-fit: contain; /* Prevents stretching or pushing outside the box */
+    object-fit: contain; 
     border-radius: 10px; 
 }
 
 #final-ui { display: none; min-height: 60vh; width: 100%; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
-.secondary-btn { color: white; border: none; padding: 14px 24px; border-radius: 14px; font-weight: 700; margin: 6px 0; width: 100%; cursor: pointer; font-size: 1.05rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+/* 🛠️ FIXES REVIEW ANSWERS VISIBILITY & SEPARATES COLOR SCHEMES */
+.secondary-btn { 
+    border: none; 
+    padding: 14px 24px; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    margin: 6px 0; 
+    width: 100%; 
+    cursor: pointer; 
+    font-size: 1.05rem; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+    display: block;
+}
+
+/* 🔍 Review Answers Button - Dark text on Light slate background */
+#final-ui .secondary-btn:nth-of-type(1) {
+    background: #e2e8f0; 
+    color: #1e293b !important; 
+}
+
+/* 🔄 Start Quiz Again Button - Brown text on Gold background */
+#final-ui .secondary-btn:nth-of-type(2) {
+    background: var(--gold); 
+    color: #78350f !important;
+}
+
+/* 🏠 Back to Dashboard Button - White text on Success green background */
+#final-ui .secondary-btn:nth-of-type(3) {
+    background: var(--success); 
+    color: white !important;
+}
