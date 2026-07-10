@@ -266,7 +266,7 @@ function buildQuizRows() {
                 // 🎯 100% SATEEK DATA EXTRACTION: Bina kisi mismatch ke English & Gujarati values separate bhejega
                 let branchFolder = currentBranch; // English path parameter e.g., "gujarat_history"
                 
-                window.location.href = `quiz-player.html?subject=${currentSubject}&branch=${encodeURIComponent(branchGujName)}&branchFolder=${branchFolder}&type=${encodeURIComponent(currentType)}&no=${i}`;
+                window.location.href = `new_quiz_player.html?subject=${currentSubject}&branch=${encodeURIComponent(branchGujName)}&branchFolder=${branchFolder}&type=${encodeURIComponent(currentType)}&no=${i}`;
             }
         };
         container.appendChild(row);
